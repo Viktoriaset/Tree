@@ -29,18 +29,18 @@ struct node {
 };
 
 bool dfs(std::vector<node>& graph, int vertex) {
-	if (graph[vertex - 1].isChek) {
+	if (graph[vertex].isChek) {
 		return false;
 	}
 
-	graph[vertex - 1].isChek = true;
+	graph[vertex].isChek = true;
 
-	for (int i = 0; i < graph[vertex - 1].transition.size(); i++) {
-		graph[graph[vertex - 1].transition[i] -1].deleteEdge(vertex);
-		if (!dfs(graph, graph[vertex - 1].transition[i])) {
+	for (int i = 0; i < graph[vertex].transition.size(); i++) {
+		graph[graph[vertex].transition[i]].deleteEdge(vertex);
+		if (!dfs(graph, graph[vertex].transition[i])) {
 			return false;
 		}
-		graph[graph[vertex - 1].transition[i] - 1].addEdge(vertex);
+		graph[graph[vertex ].transition[i]].addEdge(vertex);
 	}
 	return true;
 }
@@ -56,18 +56,27 @@ int main()
 		out << "NO";
 		return 0;
 	}
-	std::vector<node> Graph(n);
+	std::vector<node> Graph(n+1);
 
 	for (int i = 0; i < m; i++) {
 		int vertex, edge;
 		inp >> vertex >> edge;
-		Graph[vertex - 1].vertex = vertex;
-		Graph[vertex - 1].addEdge(edge);
-		Graph[edge - 1].vertex = edge;
-		Graph[edge - 1].addEdge(vertex);
+		Graph[vertex].vertex = vertex;
+		Graph[vertex].addEdge(edge);
+		Graph[edge].vertex = edge;
+		Graph[edge].addEdge(vertex);
 	}
 
-	out <<  (dfs(Graph, 1)? "YES" : "NO");
+	bool answer = dfs(Graph, 1);
+
+	for (int i = 1; i < Graph.size(); i++) {
+		if (!Graph[i].isChek) {
+			out << "NO";
+			return 0;
+		}
+	}
+
+	out <<  ((answer)? "YES" : "NO");
 	return 0;
 }
 
